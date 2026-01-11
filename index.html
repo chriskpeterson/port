@@ -1,513 +1,656 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chris Peterson | Strategic Communications</title>
-    
+    <title>Chris Peterson | Documentation Leader</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts (Optional for nicer typography similar to design) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
+    
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .hidden { display: none !important; }
-        
-        /* Animation classes */
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        .slide-up { animation: slideUp 0.5s ease-out; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        html {
+            scroll-behavior: smooth;
         }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        ::selection {
+            background-color: #ffedd5;
+            color: #7c2d12;
+        }
+        /* Custom Utilities */
+        .glass-nav {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        /* Timeline Line */
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 1.25rem; /* 20px / ml-5 */
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #e2e8f0, transparent);
+            transform: translateX(-0.5px);
+        }
+        @media (min-width: 768px) {
+            .timeline-container::before {
+                left: 50%;
+                margin-left: 0;
+                transform: translateX(-50%);
+            }
+        }
+        
+        /* Modal Animation */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 300ms ease-out, transform 300ms ease-out;
+        }
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 200ms ease-in, transform 200ms ease-in;
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+<body class="bg-slate-50 text-slate-800 font-sans">
 
     <!-- Navigation -->
-    <nav id="navbar" class="fixed top-6 left-0 right-0 z-50 transition-all duration-300 flex justify-center px-4">
-        <div id="nav-container" class="flex items-center justify-between gap-8 px-6 py-3 rounded-full backdrop-blur-md border border-white/20 bg-white/50 w-auto transition-all duration-300">
-            
-            <!-- Logo / Home Link -->
-            <div class="flex items-center gap-2 cursor-pointer group" onclick="closeCaseStudy()">
-                <div class="w-8 h-8 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-sm group-hover:bg-indigo-600 transition-colors">
-                    CP
-                </div>
-                <span id="nav-name" class="font-bold tracking-tight text-slate-900 hidden">Chris Peterson</span>
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-6 bg-transparent">
+        <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="font-bold text-xl tracking-tight flex items-center gap-2 text-slate-900">
+                <i data-lucide="terminal" class="w-6 h-6 text-orange-600"></i>
+                <span>Chris Peterson</span>
             </div>
 
             <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center gap-8" id="desktop-menu">
-                <a href="#expertise" class="nav-link text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Expertise</a>
-                <a href="#work" class="nav-link text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Work</a>
-                <a href="#experience" class="nav-link text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Experience</a>
-                <a href="#contact" class="px-5 py-2 bg-slate-900 text-white rounded-full text-sm font-medium hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-500/20 transition-all">Let's Talk</a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="#home" class="nav-link text-slate-600 hover:text-orange-600 transition-colors">Home</a>
+                <a href="#impact" class="nav-link text-slate-600 hover:text-orange-600 transition-colors">Impact</a>
+                <a href="#philosophy" class="nav-link text-slate-600 hover:text-orange-600 transition-colors">Philosophy</a>
+                <a href="#projects" class="nav-link text-slate-600 hover:text-orange-600 transition-colors">Projects</a>
+                <a href="#experience" class="nav-link text-slate-600 hover:text-orange-600 transition-colors">Experience</a>
+                <a href="mailto:chriskpeterson@gmail.com" class="bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors">
+                    Hire Me
+                </a>
             </div>
 
             <!-- Mobile Menu Button -->
-            <button class="md:hidden text-slate-900" onclick="toggleMobileMenu()">
-                <i data-lucide="menu" id="menu-icon"></i>
+            <button id="mobile-menu-btn" class="md:hidden text-slate-600 focus:outline-none">
+                <i data-lucide="menu"></i>
             </button>
         </div>
 
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden absolute top-20 left-4 right-4 bg-white/90 backdrop-blur-xl shadow-2xl rounded-3xl border border-slate-100 p-6 flex-col gap-2 animate-in slide-in-from-top-4">
-            <button onclick="closeCaseStudy(); toggleMobileMenu()" class="text-lg font-medium text-slate-900 py-3 px-4 rounded-xl hover:bg-slate-50 text-left">Home</button>
-            <a href="#expertise" onclick="toggleMobileMenu()" class="text-lg font-medium text-slate-600 py-3 px-4 rounded-xl hover:bg-slate-50">Expertise</a>
-            <a href="#work" onclick="toggleMobileMenu()" class="text-lg font-medium text-slate-600 py-3 px-4 rounded-xl hover:bg-slate-50">Work</a>
-            <a href="#experience" onclick="toggleMobileMenu()" class="text-lg font-medium text-slate-600 py-3 px-4 rounded-xl hover:bg-slate-50">Experience</a>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-b border-slate-200 p-6 flex-col gap-4 shadow-xl">
+            <a href="#home" class="mobile-link block text-slate-600 font-medium py-2">Home</a>
+            <a href="#impact" class="mobile-link block text-slate-600 font-medium py-2">Impact</a>
+            <a href="#philosophy" class="mobile-link block text-slate-600 font-medium py-2">Philosophy</a>
+            <a href="#projects" class="mobile-link block text-slate-600 font-medium py-2">Projects</a>
+            <a href="#experience" class="mobile-link block text-slate-600 font-medium py-2">Experience</a>
         </div>
     </nav>
 
-    <!-- Main Content Container -->
-    <main id="main-view">
-        
-        <!-- Hero Section -->
-        <header class="relative pt-48 pb-32 overflow-hidden">
-            <!-- Background Gradients -->
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-indigo-50 via-white to-transparent -z-10 rounded-b-[50px] opacity-60"></div>
-            <div class="absolute top-20 right-0 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10 animate-pulse"></div>
-            <div class="absolute top-40 left-0 w-72 h-72 bg-violet-100/50 rounded-full blur-3xl -z-10"></div>
-            
-            <div class="max-w-4xl mx-auto px-6 text-center">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-widest mb-8">
-                    <i data-lucide="sparkles" class="w-3 h-3 text-indigo-500"></i>
-                    Strategic Communications
+    <!-- Hero Section -->
+    <section id="home" class="pt-40 pb-24 px-6">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-bold uppercase tracking-wide">
+                    <span class="w-2 h-2 rounded-full bg-orange-600 animate-pulse"></span>
+                    Available for RevenueCat
                 </div>
-                <h1 class="text-5xl md:text-7xl font-bold text-slate-900 leading-[1.1] mb-8 tracking-tight">
-                    Turning complexity into <br/>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">
-                        human connection.
+                <h1 class="text-5xl md:text-6xl font-bold text-slate-900 leading-tight">
+                    I don't just write docs. <br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
+                        I build systems.
                     </span>
                 </h1>
-                <p class="text-xl md:text-2xl text-slate-500 mb-12 leading-relaxed max-w-2xl mx-auto">
-                    I bridge the gap between engineering and user experience. Over a decade of leading content strategy for industry giants like HP, Poly, and HPE.
+                <p class="text-lg text-slate-600 max-w-lg leading-relaxed">
+                    Your documentation is fragmented. I turn it into a durable competitive advantage. 
+                    Senior Documentation Program Manager specialized in Information Architecture, AI-readiness, and reducing support load.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="#work" class="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-indigo-600 transition-all hover:scale-105 shadow-xl shadow-slate-200">
-                        View Selected Work
+                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <a href="#impact" class="flex items-center justify-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-lg hover:bg-slate-800 transition-all font-medium">
+                        View My Impact
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>
-                    <a href="mailto:chriskpeterson@gmail.com" class="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-full font-bold hover:bg-slate-50 transition-all hover:border-slate-300">
-                        Contact Me
+                    <a href="#experience" class="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-6 py-3 rounded-lg hover:bg-slate-50 transition-all font-medium">
+                        View Resume
                     </a>
                 </div>
             </div>
-        </header>
-
-        <!-- Stats Section -->
-        <div class="max-w-7xl mx-auto px-6 mb-32">
-            <div class="bg-white rounded-3xl p-12 shadow-xl shadow-slate-200/50 border border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-                <div class="flex flex-col items-center text-center p-4">
-                    <span class="text-4xl font-bold text-slate-900 mb-2">Global</span>
-                    <span class="text-slate-500 font-medium">Partnership Leadership</span>
-                </div>
-                <div class="flex flex-col items-center text-center p-4">
-                    <span class="text-4xl font-bold text-slate-900 mb-2">10%</span>
-                    <span class="text-slate-500 font-medium">Efficiency Increase</span>
-                </div>
-                <div class="flex flex-col items-center text-center p-4">
-                    <span class="text-4xl font-bold text-slate-900 mb-2">10+ Years</span>
-                    <span class="text-slate-500 font-medium">Strategic Experience</span>
+            
+            <!-- Visual: Code/Docs concept -->
+            <div class="relative mt-8 md:mt-0">
+                <div class="absolute -inset-4 bg-gradient-to-tr from-orange-500/20 to-purple-500/20 blur-xl rounded-full opacity-70"></div>
+                <div class="relative bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 border-b border-slate-100 px-4 py-3 flex items-center gap-2">
+                        <div class="flex gap-1.5">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                        </div>
+                        <div class="text-xs text-slate-400 font-mono ml-2">revenuecat_strategy.md</div>
+                    </div>
+                    <div class="p-6 font-mono text-sm space-y-4">
+                        <div class="text-slate-400"># Current State: Fragmentation</div>
+                        <div class="pl-4 border-l-2 border-red-200 text-slate-600">
+                            <span class="text-red-500">-</span> Support tickets increasing<br/>
+                            <span class="text-red-500">-</span> Inconsistent voice<br/>
+                            <span class="text-red-500">-</span> Hard for AI to parse
+                        </div>
+                        
+                        <div class="text-slate-400 pt-2"># Future State: Cohesive System</div>
+                        <div class="pl-4 border-l-2 border-green-200 text-slate-800">
+                            <span class="text-green-600">+</span> <span class="bg-green-100 text-green-800 px-1 rounded">Structured Content (DITA/XML)</span><br/>
+                            <span class="text-green-600">+</span> <span class="bg-green-100 text-green-800 px-1 rounded">70% Support Reduction</span><br/>
+                            <span class="text-green-600">+</span> <span class="bg-green-100 text-green-800 px-1 rounded">AI-Ready Taxonomy</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Expertise Section -->
-        <section id="expertise" class="py-20 scroll-mt-20">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-                    <div class="max-w-xl">
-                        <h2 class="text-3xl font-bold text-slate-900 mb-4">Core Competencies</h2>
-                        <p class="text-slate-600 text-lg">
-                            My expertise lies at the intersection of technical depth and strategic storytelling.
-                        </p>
+    <!-- Impact Stats Section -->
+    <section id="impact" class="py-24 bg-white border-y border-slate-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900">Proven ROI on Documentation</h2>
+                <p class="text-slate-500 mt-4">I don't measure success by word count. I measure it by developer success. <br/><span class="text-orange-600 text-sm font-semibold">Click a card for details</span></p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Stat 1 -->
+                <div onclick="openModal('roi-support')" class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-all cursor-pointer group hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mb-6 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                        <i data-lucide="bar-chart" class="w-6 h-6"></i>
                     </div>
-                    <div class="h-px bg-slate-200 flex-1 mb-2"></div>
+                    <div class="text-4xl font-bold text-slate-900 mb-2">70%</div>
+                    <h3 class="text-lg font-semibold mb-2">Reduction in Support Queries</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Designed an interactive compatibility matrix at HP/Poly that pre-empted common user questions, drastically cutting ticket volume.
+                    </p>
+                    <div class="mt-4 text-orange-600 text-xs font-bold uppercase tracking-wide flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Read Case Study <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Tech Comms -->
-                    <div class="group p-8 bg-white rounded-3xl border border-slate-100 hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
-                        <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">Tech Communications</h3>
-                        <p class="text-slate-600 leading-relaxed">Managing high-stakes narratives for hardware/software ecosystems.</p>
+                <!-- Stat 2 -->
+                <div onclick="openModal('roi-system')" class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-all cursor-pointer group hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
                     </div>
-
-                    <!-- Stakeholder Mgmt -->
-                    <div class="group p-8 bg-white rounded-3xl border border-slate-100 hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
-                        <div class="w-12 h-12 bg-violet-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="users" class="w-6 h-6 text-white"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">Stakeholder Management</h3>
-                        <p class="text-slate-600 leading-relaxed">Aligning Product, Engineering, and UX objectives in leadership forums.</p>
+                    <div class="text-4xl font-bold text-slate-900 mb-2">100%</div>
+                    <h3 class="text-lg font-semibold mb-2">System Ownership</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Currently managing end-to-end documentation strategy for the HP + Google partnership, including architecture, budget, and a team of 6.
+                    </p>
+                    <div class="mt-4 text-blue-600 text-xs font-bold uppercase tracking-wide flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        View Responsibility <i data-lucide="arrow-right" class="w-3 h-3"></i>
                     </div>
+                </div>
 
-                    <!-- AI Automation -->
-                    <div class="group p-8 bg-white rounded-3xl border border-slate-100 hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
-                        <div class="w-12 h-12 bg-indigo-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <i data-lucide="zap" class="w-6 h-6 text-white"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">AI Automation</h3>
-                        <p class="text-slate-600 leading-relaxed">Architecting Agentic AI tools to automate release cycles.</p>
+                <!-- Stat 3 -->
+                <div onclick="openModal('roi-api')" class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-all cursor-pointer group hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 mb-6 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-slate-900 mb-2">API & DX</div>
+                    <h3 class="text-lg font-semibold mb-2">Dev Experience Strategy</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Spearheading a new API Developer Portal and transitioning Poly's HTML docs into HP's hybrid ecosystem. Structured data for humans & machines.
+                    </p>
+                    <div class="mt-4 text-purple-600 text-xs font-bold uppercase tracking-wide flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        View Strategy <i data-lucide="arrow-right" class="w-3 h-3"></i>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Work / Case Studies -->
-        <section id="work" class="py-20 scroll-mt-20">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-                    <div class="max-w-xl">
-                        <h2 class="text-3xl font-bold text-slate-900 mb-4">Selected Initiatives</h2>
-                        <p class="text-slate-600 text-lg">Strategic projects delivering measurable impact.</p>
+    <!-- Philosophy / The "System" Approach -->
+    <section id="philosophy" class="py-24 px-6 bg-slate-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">
+                        Thinking in Systems, <br />
+                        <span class="text-slate-400">Not just pages.</span>
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="mt-1 bg-white p-2 rounded shadow-sm h-fit">
+                                <i data-lucide="database" class="w-5 h-5 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900">Structured Content First</h3>
+                                <p class="text-slate-600 text-sm mt-1">
+                                    RevenueCat needs to serve humans and machines. I build taxonomies where content is stored as data chunks, not blobs of text. This allows infinite reuse and perfect API context for AI.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="mt-1 bg-white p-2 rounded shadow-sm h-fit">
+                                <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900">The "First Hire" Mindset</h3>
+                                <p class="text-slate-600 text-sm mt-1">
+                                    I bridge the gap between "Staff Writer" execution and "Head of Docs" strategy. I've managed budgets, vendors, and teams, but I'm still happy to open a PR and fix a typo.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="mt-1 bg-white p-2 rounded shadow-sm h-fit">
+                                <i data-lucide="book-open" class="w-5 h-5 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900">Customer Obsession</h3>
+                                <p class="text-slate-600 text-sm mt-1">
+                                    Docs are the first line of support. I work directly with engineering and support teams to identify friction points and eliminate them before they become tickets.
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="h-px bg-slate-200 flex-1 mb-2"></div>
                 </div>
+
+                <!-- Code Block Visual -->
+                <div class="bg-slate-900 rounded-xl shadow-2xl overflow-hidden border border-slate-700 mt-8 md:mt-0">
+                    <div class="bg-slate-800 px-4 py-2 flex items-center justify-between border-b border-slate-700">
+                        <span class="text-xs text-slate-400">infrastructure.json</span>
+                        <div class="flex gap-1">
+                            <div class="w-2 h-2 rounded-full bg-slate-600"></div>
+                            <div class="w-2 h-2 rounded-full bg-slate-600"></div>
+                        </div>
+                    </div>
+                    <div class="p-6 overflow-x-auto">
+                        <pre class="text-xs font-mono leading-relaxed">
+<span class="text-purple-400">{</span>
+  <span class="text-blue-400">"strategy"</span>: <span class="text-green-400">"Scale"</span>,
+  <span class="text-blue-400">"architecture"</span>: <span class="text-purple-400">{</span>
+    <span class="text-blue-400">"type"</span>: <span class="text-green-400">"Structured/DITA"</span>,
+    <span class="text-blue-400">"output"</span>: [<span class="text-green-400">"Web"</span>, <span class="text-green-400">"PDF"</span>, <span class="text-green-400">"ChatbotContext"</span>]
+  <span class="text-purple-400">}</span>,
+  <span class="text-blue-400">"goals"</span>: [
+    <span class="text-green-400">"Reduce Support Load"</span>,
+    <span class="text-green-400">"API Portal Launch"</span>,
+    <span class="text-green-400">"Legacy Migration"</span>
+  ]
+<span class="text-purple-400">}</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section (New) -->
+    <section id="projects" class="py-24 bg-white border-y border-slate-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900">Featured Projects</h2>
+                    <p class="text-slate-500 mt-2">Delivering systems, not just documents.</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div onclick="openModal('proj-matrix')" class="group cursor-pointer">
+                    <div class="bg-orange-50 rounded-xl aspect-video mb-4 overflow-hidden border border-orange-100 relative">
+                        <div class="absolute inset-0 bg-orange-600/10 group-hover:bg-orange-600/0 transition-colors"></div>
+                        <div class="absolute bottom-4 left-4 bg-white px-3 py-1 rounded text-xs font-bold shadow text-orange-600">TOOL</div>
+                        <div class="flex items-center justify-center h-full">
+                            <i data-lucide="layout-grid" class="w-12 h-12 text-orange-300 group-hover:scale-110 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-900 group-hover:text-orange-600 transition-colors">Interactive Matrix</h3>
+                    <p class="text-sm text-slate-600 mt-1 line-clamp-2">
+                        A dynamic lookup tool that solved the #1 support ticket driver for Poly headsets.
+                    </p>
+                </div>
+
+                <!-- Project 2 -->
+                <div onclick="openModal('proj-api')" class="group cursor-pointer">
+                     <div class="bg-indigo-50 rounded-xl aspect-video mb-4 overflow-hidden border border-indigo-100 relative">
+                        <div class="absolute inset-0 bg-indigo-600/10 group-hover:bg-indigo-600/0 transition-colors"></div>
+                        <div class="absolute bottom-4 left-4 bg-white px-3 py-1 rounded text-xs font-bold shadow text-indigo-600">PLATFORM</div>
+                        <div class="flex items-center justify-center h-full">
+                            <i data-lucide="code-2" class="w-12 h-12 text-indigo-300 group-hover:scale-110 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-900 group-hover:text-indigo-600 transition-colors">API Developer Portal</h3>
+                    <p class="text-sm text-slate-600 mt-1 line-clamp-2">
+                        Design and strategy for Poly's developer front door, featuring interactive consoles and auth guides.
+                    </p>
+                </div>
+
+                <!-- Project 3 -->
+                <div onclick="openModal('proj-migration')" class="group cursor-pointer">
+                     <div class="bg-emerald-50 rounded-xl aspect-video mb-4 overflow-hidden border border-emerald-100 relative">
+                        <div class="absolute inset-0 bg-emerald-600/10 group-hover:bg-emerald-600/0 transition-colors"></div>
+                        <div class="absolute bottom-4 left-4 bg-white px-3 py-1 rounded text-xs font-bold shadow text-emerald-600">SYSTEM</div>
+                        <div class="flex items-center justify-center h-full">
+                            <i data-lucide="refresh-cw" class="w-12 h-12 text-emerald-300 group-hover:scale-110 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-900 group-hover:text-emerald-600 transition-colors">Enterprise Migration</h3>
+                    <p class="text-sm text-slate-600 mt-1 line-clamp-2">
+                        Architecting the Poly-to-HP integration, merging hybrid PDF/HTML ecosystems.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Timeline -->
+    <section id="experience" class="py-24 bg-white border-t border-slate-100">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900">Experience Map</h2>
+                <p class="text-slate-500 mt-2">A decade of preparing for this role.</p>
+            </div>
+
+            <div class="space-y-12 relative timeline-container">
                 
-                <div id="case-studies-grid" class="grid gap-8">
-                    <!-- Case studies injected via JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Experience Timeline -->
-        <section id="experience" class="py-20 bg-slate-50 scroll-mt-20">
-            <div class="max-w-3xl mx-auto px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-slate-900">Experience</h2>
-                </div>
-                
-                <div class="space-y-12">
-                    <!-- Job 1 -->
-                    <div class="relative pl-8 md:pl-0">
-                        <div class="hidden md:block absolute left-[-40px] top-0 bottom-0 w-px bg-slate-200"></div>
-                        <div class="hidden md:block absolute left-[-44px] top-1 w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-slate-50"></div>
-                        <div class="flex flex-col md:flex-row gap-2 md:gap-8 items-baseline">
-                            <div class="md:w-32 shrink-0">
-                                <span class="text-sm font-bold text-slate-400">2022 – Present</span>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-slate-900">Staff Technology Communications Lead for Video</h3>
-                                <div class="text-indigo-600 font-medium mb-2">HP / Poly</div>
-                                <p class="text-slate-600 leading-relaxed text-sm">Directing documentation strategy for Project Beam (Google partnership). Managing global content teams.</p>
-                            </div>
-                        </div>
+                <!-- Job 1 -->
+                <div class="relative flex flex-col md:flex-row items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <!-- Icon -->
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-50 shadow shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2 z-10 mb-4 md:mb-0">
+                        <i data-lucide="terminal" class="w-5 h-5 text-orange-600"></i>
                     </div>
-                    <!-- Job 2 -->
-                    <div class="relative pl-8 md:pl-0">
-                        <div class="hidden md:block absolute left-[-40px] top-0 bottom-0 w-px bg-slate-200"></div>
-                        <div class="hidden md:block absolute left-[-44px] top-1 w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-slate-50"></div>
-                        <div class="flex flex-col md:flex-row gap-2 md:gap-8 items-baseline">
-                            <div class="md:w-32 shrink-0">
-                                <span class="text-sm font-bold text-slate-400">2019 – 2022</span>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-slate-900">Senior Communications Strategist</h3>
-                                <div class="text-indigo-600 font-medium mb-2">Poly (Plantronics)</div>
-                                <p class="text-slate-600 leading-relaxed text-sm">Led technical narratives for CCX portfolio. Improved discoverability by 10%.</p>
-                            </div>
+                    
+                    <!-- Content Card -->
+                    <div class="w-full md:w-[calc(50%-2.5rem)] bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-slate-900">HP / Poly</h3>
+                            <span class="text-xs font-semibold bg-orange-100 text-orange-800 px-2 py-1 rounded">Current</span>
                         </div>
-                    </div>
-                    <!-- Job 3 -->
-                    <div class="relative pl-8 md:pl-0">
-                        <div class="hidden md:block absolute left-[-40px] top-0 bottom-0 w-px bg-slate-200"></div>
-                        <div class="hidden md:block absolute left-[-44px] top-1 w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-slate-50"></div>
-                        <div class="flex flex-col md:flex-row gap-2 md:gap-8 items-baseline">
-                            <div class="md:w-32 shrink-0">
-                                <span class="text-sm font-bold text-slate-400">2013 – 2019</span>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-slate-900">Video Technology Information Lead</h3>
-                                <div class="text-indigo-600 font-medium mb-2">HPE</div>
-                                <p class="text-slate-600 leading-relaxed text-sm">Launch lead for HPE Synergy. Designed AR overlays for enterprise onboarding.</p>
-                            </div>
-                        </div>
+                        <div class="text-sm text-slate-500 font-medium mb-4">Staff Tech Writer & Doc Lead</div>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Acting Head of Docs for HP/Google partnership; manage team of 6.</li>
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Leading strategy for new API Developer Portal & specialized AVI Integrator guides.</li>
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Architecting Poly→HP migration (merging HTML-first docs into hybrid PDF/Topic ecosystem).</li>
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Reduced support tickets by 70% via new IA.</li>
+                        </ul>
                     </div>
                 </div>
+
+                <!-- Job 2 -->
+                <div class="relative flex flex-col md:flex-row items-center justify-between md:justify-normal group">
+                     <!-- Icon -->
+                     <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-50 shadow shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2 z-10 mb-4 md:mb-0">
+                        <i data-lucide="layers" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+
+                    <!-- Spacer for correct side (Desktop) -->
+                    <div class="hidden md:block md:w-[calc(50%-2.5rem)]"></div>
+
+                    <!-- Content Card -->
+                    <div class="w-full md:w-[calc(50%-2.5rem)] bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-slate-900">Poly</h3>
+                            <span class="text-xs text-slate-400">2019 - 2022</span>
+                        </div>
+                        <div class="text-sm text-slate-500 font-medium mb-4">Senior Technical Writer</div>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Key architect for migration to structured content.</li>
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Automated metadata handling to speed up publishing.</li>
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Designed new taxonomy for customer portal.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Job 3 -->
+                <div class="relative flex flex-col md:flex-row items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <!-- Icon -->
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-50 shadow shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2 z-10 mb-4 md:mb-0">
+                        <i data-lucide="database" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+
+                    <!-- Content Card -->
+                    <div class="w-full md:w-[calc(50%-2.5rem)] bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-slate-900">HPE</h3>
+                            <span class="text-xs text-slate-400">2013 - 2019</span>
+                        </div>
+                        <div class="text-sm text-slate-500 font-medium mb-4">Information Developer</div>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Led DITA training and structured content adoption.</li>
+                            <li class="flex gap-2 items-start"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 mt-0.5 shrink-0"></i> Created global information architecture standards.</li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <footer id="contact" class="py-20 bg-white border-t border-slate-100">
-            <div class="max-w-4xl mx-auto px-6 text-center">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Let's build something clear.</h2>
-                <p class="text-xl text-slate-500 mb-10 max-w-xl mx-auto">
-                    Available for leadership roles in Technical Communications and Content Strategy.
-                </p>
-                <div class="flex justify-center gap-6">
-                    <a href="mailto:chriskpeterson@gmail.com" class="px-8 py-3 bg-slate-900 text-white rounded-full font-bold hover:bg-indigo-600 transition-colors">Email Me</a>
-                    <a href="#" class="px-8 py-3 bg-white text-slate-900 border border-slate-200 rounded-full font-bold hover:border-slate-400 transition-colors">LinkedIn</a>
-                </div>
-                <div class="mt-20 text-slate-400 text-sm">
-                    &copy; <span id="year"></span> Chris Peterson.
-                </div>
-            </div>
-        </footer>
-    </main>
-
-    <!-- Case Study View (Hidden by default) -->
-    <div id="case-study-view" class="hidden pt-32 pb-20 min-h-screen bg-slate-50 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div class="max-w-5xl mx-auto px-6">
-            <button onclick="closeCaseStudy()" class="group flex items-center gap-2 text-slate-500 hover:text-slate-900 font-medium mb-12 transition-colors">
-                <div class="p-2 bg-white rounded-full border border-slate-200 group-hover:border-slate-400 transition-colors">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                </div>
-                <span>Back to Portfolio</span>
-            </button>
-
-            <!-- Content injected here -->
-            <div id="case-study-content" class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100"></div>
-
-            <div class="mt-20 text-center">
-                <p class="text-slate-400 mb-6">Interested in the details?</p>
-                <a href="mailto:chriskpeterson@gmail.com" class="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 hover:scale-105 transition-all shadow-lg shadow-slate-200">
-                    Discuss this Project <i data-lucide="arrow-right" class="w-4 h-4"></i>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-24 px-6">
+        <div class="max-w-4xl mx-auto text-center space-y-8">
+            <h2 class="text-4xl font-bold">Ready to scale RevenueCat's documentation?</h2>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                I bring the systems thinking, the leadership experience, and the customer obsession you need for this role.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                <a href="mailto:chriskpeterson@gmail.com" class="flex items-center justify-center gap-2 bg-orange-600 text-white px-8 py-4 rounded-lg hover:bg-orange-500 transition-all font-bold text-lg">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    chriskpeterson@gmail.com
                 </a>
+                <a href="https://linkedin.com/in/chrispeterson" target="_blank" rel="noreferrer" class="flex items-center justify-center gap-2 bg-slate-800 text-white border border-slate-700 px-8 py-4 rounded-lg hover:bg-slate-700 transition-all font-bold text-lg">
+                    <i data-lucide="linkedin" class="w-5 h-5"></i>
+                    LinkedIn Profile
+                </a>
+            </div>
+            <div class="pt-16 border-t border-slate-800 text-slate-500 text-sm">
+                <p>&copy; <span id="year"></span> Chris Peterson. Built for RevenueCat.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL OVERLAY -->
+    <div id="modal-overlay" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+
+        <!-- Modal Panel -->
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-4xl border border-slate-100">
+                    
+                    <!-- Content -->
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-8 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 sm:mx-0 sm:h-12 sm:w-12" id="modal-icon-container">
+                                <i data-lucide="info" id="modal-icon" class="h-6 w-6 text-orange-600"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-6 sm:mt-0 sm:text-left w-full">
+                                <h3 class="text-2xl font-bold leading-6 text-slate-900" id="modal-title">Modal Title</h3>
+                                <div class="mt-4">
+                                    <p class="text-lg text-slate-500" id="modal-desc">
+                                        Description goes here.
+                                    </p>
+                                    <div class="mt-6 bg-slate-50 p-6 rounded-xl border border-slate-100 text-base text-slate-700 leading-relaxed" id="modal-content">
+                                        Additional details.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="bg-slate-50 px-4 py-4 sm:flex sm:flex-row-reverse sm:px-8">
+                        <button type="button" class="inline-flex w-full justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 sm:ml-3 sm:w-auto" onclick="closeModal()">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Data and Logic -->
+    <!-- Scripts -->
     <script>
-        // Set year
+        // Initialize Lucide Icons
+        lucide.createIcons();
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Data
-        const caseStudies = [
-            {
-                id: 'project-beam',
-                title: 'Project Beam',
-                subtitle: 'HP & Google Partnership',
-                role: 'Strategic Lead',
-                icon: 'globe',
-                gradient: 'from-blue-600 to-indigo-600',
-                shortDesc: 'Unifying hardware and software narratives for a global joint venture.',
-                challenge: 'HP and Google launched a strategic partnership to integrate hardware and software ecosystems. The challenge was to align two massive corporate cultures, distinct technical stacks, and disparate release cadences into a unified narrative for global customers.',
-                solution: 'I established a centralized "Communication Council" comprising Engineering, Product, and UX leads from both organizations. We moved away from siloed documentation to a unified "Solution Portal" that served as the single source of truth.',
-                results: [
-                    'Successfully launched 3 major hardware products with 100% on-time delivery.',
-                    'Reduced cross-team alignment meetings by 40% through async strategies.',
-                    'Created a unified voice praised by Google leadership.'
-                ],
-                tags: ['Strategy', 'Global Partnerships', 'Stakeholder Mgmt']
-            },
-            {
-                id: 'agentic-ai',
-                title: 'Agentic AI',
-                subtitle: 'Workflow Automation',
-                role: 'Innovation Lead',
-                icon: 'cpu',
-                gradient: 'from-violet-600 to-purple-600',
-                shortDesc: 'Designing internal AI tools to synthesize Jira/Confluence data.',
-                challenge: 'Release notes were a bottleneck. Writers spent 40% of their time chasing engineers for basic feature details, leading to delays and inconsistent quality across product lines. We needed a way to scale without adding headcount.',
-                solution: 'I architected an internal tool leveraging Agentic AI principles. The system connects to Jira APIs to fetch "Done" tickets, parses technical comments, and drafts user-friendly release notes in our brand voice for human review.',
-                results: [
-                    'Reduced "Draft to Publish" time by roughly 10% in initial testing.',
-                    'Eliminated 80% of routine "information gathering" meetings.',
-                    'Standardized output format across 4 distinct product lines.'
-                ],
-                tags: ['AI Innovation', 'Process Design', 'Efficiency']
-            },
-            {
-                id: 'customer-impact',
-                title: 'CX Transformation',
-                subtitle: 'Compatibility Framework',
-                role: 'Content Strategist',
-                icon: 'users',
-                gradient: 'from-emerald-600 to-teal-600',
-                shortDesc: 'Redesigning the compatibility matrix to reduce support friction.',
-                challenge: 'Customers were struggling to understand hardware interoperability, leading to high support ticket volume for "compatibility" questions. Existing documentation was static and buried in PDF manuals.',
-                solution: 'I led the shift from static PDFs to a dynamic, web-based "Compatibility Matrix." We redesigned the information architecture to focus on "Solutions" (what can I do?) rather than "Products" (what did I buy?).',
-                results: [
-                    'Directly attributed a 10% reduction in Level 1 support tickets.',
-                    'Increased support content page views by 25%.',
-                    'Received "Customer Hero" award for improving the buyer journey.'
-                ],
-                tags: ['UX Strategy', 'Support Reduction', 'Information Architecture']
-            }
-        ];
-
-        // Render Cards
-        const grid = document.getElementById('case-studies-grid');
-        caseStudies.forEach((study, index) => {
-            const card = document.createElement('div');
-            card.className = "group relative bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-indigo-900/10 transition-all duration-500 cursor-pointer";
-            card.onclick = () => openCaseStudy(index);
-            card.innerHTML = `
-                <div class="grid lg:grid-cols-2 h-full">
-                    <div class="bg-gradient-to-br ${study.gradient} p-12 flex flex-col justify-between relative overflow-hidden h-64 lg:h-auto">
-                        <div class="absolute top-0 right-0 p-12 opacity-20 transform group-hover:scale-125 group-hover:rotate-12 transition-all duration-700 text-white">
-                            <i data-lucide="${study.icon}" width="48" height="48"></i>
-                        </div>
-                        <div class="relative z-10">
-                            <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-white mb-4 border border-white/10">
-                                ${study.role}
-                            </span>
-                            <h3 class="text-3xl font-bold text-white mb-2">${study.title}</h3>
-                            <p class="text-white/80 font-medium text-lg">${study.subtitle}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="p-10 flex flex-col justify-center">
-                        <p class="text-slate-600 text-lg mb-8 leading-relaxed">${study.shortDesc}</p>
-                        <div class="flex flex-wrap gap-2 mb-8">
-                            ${study.tags.slice(0, 2).map(tag => `<span class="px-3 py-1 bg-slate-100 text-slate-600 text-sm font-medium rounded-lg">${tag}</span>`).join('')}
-                        </div>
-                        <div class="flex items-center gap-2 text-indigo-600 font-bold group-hover:gap-4 transition-all">
-                            View Case Study <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                        </div>
-                    </div>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-
-        // Initialize Icons
-        lucide.createIcons();
-
-        // Navbar Scroll Effect
+        // -----------------------
+        // NAVIGATION LOGIC
+        // -----------------------
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
         const navbar = document.getElementById('navbar');
-        const navContainer = document.getElementById('nav-container');
-        const navName = document.getElementById('nav-name');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = ['home', 'impact', 'philosophy', 'projects', 'experience'];
 
-        window.addEventListener('scroll', () => {
-            const isScrolled = window.scrollY > 20;
-            const isCaseStudyOpen = !document.getElementById('case-study-view').classList.contains('hidden');
-
-            if (isScrolled || isCaseStudyOpen) {
-                navContainer.classList.add('bg-white/80', 'border-slate-200', 'shadow-lg', 'shadow-slate-200/20', 'w-full', 'max-w-4xl');
-                navContainer.classList.remove('bg-white/50', 'border-white/20', 'w-auto');
-                navName.classList.remove('hidden');
-            } else {
-                navContainer.classList.remove('bg-white/80', 'border-slate-200', 'shadow-lg', 'shadow-slate-200/20', 'w-full', 'max-w-4xl');
-                navContainer.classList.add('bg-white/50', 'border-white/20', 'w-auto');
-                navName.classList.add('hidden');
-            }
-        });
-
-        // Mobile Menu Toggle
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const icon = document.getElementById('menu-icon');
+        btn.addEventListener('click', () => {
             menu.classList.toggle('hidden');
             menu.classList.toggle('flex');
-            
-            if (!menu.classList.contains('hidden')) {
-                icon.setAttribute('data-lucide', 'x');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            // Navbar Style
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass-nav', 'py-4', 'shadow-sm');
+                navbar.classList.remove('py-6', 'bg-transparent');
             } else {
-                icon.setAttribute('data-lucide', 'menu');
+                navbar.classList.remove('glass-nav', 'py-4', 'shadow-sm');
+                navbar.classList.add('py-6', 'bg-transparent');
             }
-            lucide.createIcons();
-        }
 
-        // View Logic
-        function openCaseStudy(index) {
-            const data = caseStudies[index];
-            const content = document.getElementById('case-study-content');
-            
-            // Build Content
-            content.innerHTML = `
-                <div class="bg-gradient-to-r ${data.gradient} text-white p-12 md:p-20 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-12 opacity-10 transform scale-150 rotate-12">
-                        <i data-lucide="${data.icon}" width="48" height="48"></i>
-                    </div>
-                    <div class="relative z-10 max-w-2xl">
-                        <div class="flex items-center gap-3 mb-6">
-                            <span class="px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold border border-white/10">
-                                ${data.role}
-                            </span>
-                        </div>
-                        <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight">${data.title}</h1>
-                        <p class="text-xl md:text-2xl text-white/90 font-light">${data.subtitle}</p>
-                    </div>
-                </div>
+            // Scroll Spy
+            let current = '';
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if(element) {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top >= -200 && rect.top <= 400) {
+                        current = section;
+                    }
+                }
+            });
 
-                <div class="p-8 md:p-16">
-                    <div class="grid md:grid-cols-3 gap-12">
-                        <!-- Sidebar -->
-                        <div class="md:col-span-1 space-y-8">
-                            <div>
-                                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Focus Areas</h3>
-                                <div class="flex flex-wrap gap-2">
-                                    ${data.tags.map(tag => `<span class="px-3 py-1 bg-slate-100 text-slate-700 text-sm rounded-lg font-medium">${tag}</span>`).join('')}
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Key Impact</h3>
-                                <ul class="space-y-3">
-                                    ${data.results.map(res => `
-                                        <li class="flex items-start gap-3 text-sm text-slate-600">
-                                            <i data-lucide="check-circle" class="text-green-500 w-4 h-4 shrink-0 mt-0.5"></i>
-                                            <span>${res}</span>
-                                        </li>
-                                    `).join('')}
-                                </ul>
-                            </div>
-                        </div>
+            navLinks.forEach(link => {
+                link.classList.remove('text-orange-600');
+                link.classList.add('text-slate-600');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('text-orange-600');
+                    link.classList.remove('text-slate-600');
+                }
+            });
+        });
 
-                        <!-- Main Text -->
-                        <div class="md:col-span-2 space-y-12">
-                            <div>
-                                <h2 class="text-2xl font-bold text-slate-900 mb-4">The Challenge</h2>
-                                <p class="text-lg text-slate-600 leading-relaxed">${data.challenge}</p>
-                            </div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-slate-900 mb-4">The Solution</h2>
-                                <p class="text-lg text-slate-600 leading-relaxed">${data.solution}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        // -----------------------
+        // MODAL DATA & LOGIC
+        // -----------------------
+        const modalData = {
+            // ROI TILES
+            'roi-support': {
+                title: "70% Reduction in Tickets",
+                desc: "How I solved the #1 support driver for Poly headsets.",
+                content: "<strong>The Problem:</strong> Support was flooded with 'Does Headset X work with Phone Y?' queries.<br/><br/><strong>The Solution:</strong> I architected a dynamic, filterable compatibility matrix using metadata tags. I worked with engineering to expose the compatibility database via a public-facing UI.<br/><br/><strong>The Result:</strong> Self-service lookup replaced manual ticket creation, dropping specific query volume by 70% in 3 months.",
+                icon: "bar-chart",
+                colorClass: "bg-orange-100 text-orange-600"
+            },
+            'roi-system': {
+                title: "100% System Ownership",
+                desc: "Managing the end-to-end lifecycle for the HP + Google partnership.",
+                content: "<strong>The Scope:</strong> HP's partnership with Google requires synchronizing hardware firmware releases with Google Meet software updates.<br/><br/><strong>My Role:</strong> I manage the entire doc lifecycle, localization for 15 languages, and a team of 6 writers to ensure day-one readiness. I act as the single point of contact between Google's content team and HP's engineering.",
+                icon: "layers",
+                colorClass: "bg-blue-100 text-blue-600"
+            },
+            'roi-api': {
+                title: "API & DX Strategy",
+                desc: "Transitioning from static PDFs to a developer-centric portal.",
+                content: "<strong>The Pivot:</strong> Moving legacy Poly documentation from unstructured FrameMaker/PDF workflows to a modern 'docs-as-code' pipeline.<br/><br/><strong>Execution:</strong> I defined the OpenAPI spec standards, selected the rendering tools (Redoc), and established the workflow to let engineers contribute directly via Markdown PRs.",
+                icon: "cpu",
+                colorClass: "bg-purple-100 text-purple-600"
+            },
 
-            // Toggle Views
-            document.getElementById('main-view').classList.add('hidden');
-            document.getElementById('case-study-view').classList.remove('hidden');
-            
-            // Adjust Nav for Case Study view
-            document.getElementById('desktop-menu').classList.add('hidden'); // Hide normal nav links
-            
-            // Re-render icons and scroll top
-            lucide.createIcons();
-            window.scrollTo(0, 0);
-            
-            // Force nav update
-            window.dispatchEvent(new Event('scroll')); 
-            
-            // Add return home button to nav dynamically or just rely on logo
-            const navContainer = document.getElementById('nav-container');
-            if(!document.getElementById('nav-back-btn')) {
-                 const backBtn = document.createElement('button');
-                 backBtn.id = 'nav-back-btn';
-                 backBtn.className = "text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors hidden md:block";
-                 backBtn.textContent = "Return Home";
-                 backBtn.onclick = closeCaseStudy;
-                 // Insert before Let's Talk button (which is last child of desktop-menu)... 
-                 // Actually easier to just append to nav container or swap desktop menu content.
-                 // For simplicity, we just hide desktop menu and use the Logo or the Back Button inside the view.
+            // PROJECTS
+            'proj-matrix': {
+                title: "Interactive Compatibility Matrix",
+                desc: "A tool that turned support friction into a self-service asset.",
+                content: "This project required aligning Product Management's raw data with Customer Support's taxonomy. I built the information architecture that allowed a user to select their 'Host Platform' (e.g., Zoom, Teams) and 'Device Type' to instantly see valid hardware configurations. This replaced a static 200-page PDF.",
+                icon: "layout-grid",
+                colorClass: "bg-orange-100 text-orange-600"
+            },
+            'proj-api': {
+                title: "Poly API Developer Portal",
+                desc: "Building the front door for 3rd-party developers.",
+                content: "I led the content strategy for the launch of Poly's new Lens API. Key contributions included writing the 'Getting Started' authentication guides, establishing the voice/tone for error messages, and configuring the navigation hierarchy to separate REST endpoints from conceptual guides.",
+                icon: "code-2",
+                colorClass: "bg-indigo-100 text-indigo-600"
+            },
+            'proj-migration': {
+                title: "Enterprise Doc Migration",
+                desc: "Merging Poly's legacy docs into HP's hybrid ecosystem.",
+                content: "<strong>The Challenge:</strong> Integrating Poly's DITA/HTML-based help topics into HP's mixed PDF/Web support site.<br/><br/><strong>The Strategy:</strong> I developed a hybrid mapping strategy, maintaining high-value HTML topics for active products while automating PDF generation for legacy hardware to minimize maintenance costs.",
+                icon: "refresh-cw",
+                colorClass: "bg-emerald-100 text-emerald-600"
             }
+        };
+
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalContent = document.getElementById('modal-content');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalIconContainer = document.getElementById('modal-icon-container');
+
+        function openModal(id) {
+            const data = modalData[id];
+            if(!data) return;
+
+            // Set Content
+            modalTitle.textContent = data.title;
+            modalDesc.textContent = data.desc;
+            modalContent.innerHTML = data.content;
+            
+            // Set Icon
+            modalIcon.setAttribute('data-lucide', data.icon);
+            lucide.createIcons(); // Re-render icon
+            
+            // Reset and Set Colors
+            modalIconContainer.className = `mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10 ${data.colorClass}`;
+            modalIcon.className = `h-6 w-6 ${data.colorClass.split(' ')[1]}`; // approximate text color
+
+            // Show Modal
+            modalOverlay.classList.remove('hidden');
+            // Small timeout for fade-in effect if we added CSS transitions
         }
 
-        function closeCaseStudy() {
-            document.getElementById('case-study-view').classList.add('hidden');
-            document.getElementById('main-view').classList.remove('hidden');
-            document.getElementById('desktop-menu').classList.remove('hidden');
-            window.scrollTo(0, 0);
-            window.dispatchEvent(new Event('scroll'));
+        function closeModal() {
+            modalOverlay.classList.add('hidden');
         }
+
+        // Close on Esc key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modalOverlay.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
 
     </script>
 </body>
